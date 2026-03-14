@@ -1,0 +1,73 @@
+---
+import Base from '../../layouts/Base.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import { getCollection } from 'astro:content';
+
+const projects = (await getCollection('projects'))
+  .sort((a, b) => a.data.order - b.data.order);
+
+const live = projects.filter(p => p.data.status === 'live');
+const wip = projects.filter(p => p.data.status === 'in-progress');
+const archived = projects.filter(p => p.data.status === 'archived');
+---
+
+<Base title="Projects — Saran" description="Things I've built — from side projects to production products.">
+  <section class="container-wide page">
+    <div class="header container">
+      <h1>Projects</h1>
+      <p>Things I've built — from side projects to production products.</p>
+    </div>
+
+    {live.length > 0 && (
+      <div class="group container">
+        <h2 class="group-title"><span class="badge live">Live</span></h2>
+        <div class="grid">{live.map(p => <ProjectCard title={p.data.title} description={p.data.description} tags={p.data.tags} status={p.data.status} url={p.data.url} github={p.data.github} image={p.data.image} slug={p.id} />)}</div>
+      </div>
+    )}
+
+    {wip.length > 0 && (
+      <div class="group container">
+        <h2 class="group-title"><span class="badge in-progress">In Progress</span></h2>
+        <div class="grid">{wip.map(p => <ProjectCard title={p.data.title} description={p.data.description} tags={p.data.tags} status={p.data.status} url={p.data.url} github={p.data.github} image={p.data.image} slug={p.id} />)}</div>
+      </div>
+    )}
+
+    {archived.length > 0 && (
+      <div class="group container">
+        <h2 class="group-title"><span class="badge archived">Archived</span></h2>
+        <div class="grid">{archived.map(p => <ProjectCard title={p.data.title} description={p.data.description} tags={p.data.tags} status={p.data.status} url={p.data.url} github={p.data.github} image={p.data.image} slug={p.id} />)}</div>
+      </div>
+    )}
+
+    {projects.length === 0 && (
+      <p class="empty container">No projects yet. Check back soon.</p>
+    )}
+  </section>
+</Base>
+
+<style>
+  .page { padding: 4rem 0; }
+
+  .header { margin-bottom: 3rem; }
+
+  h1 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 0.75rem; }
+  .header p { color: var(--text-muted); max-width: 480px; }
+
+  .group { margin-bottom: 3rem; }
+
+  .group-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+    font-size: 1rem;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .empty { color: var(--text-muted); font-style: italic; padding: 4rem 0; }
+</style>

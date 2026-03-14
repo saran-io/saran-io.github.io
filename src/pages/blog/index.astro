@@ -1,0 +1,64 @@
+---
+import Base from '../../layouts/Base.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const allTags = [...new Set(posts.flatMap(p => p.data.tags))].sort();
+---
+
+<Base title="Blog — Saran" description="Thoughts on building products, AI, design, and the founder journey.">
+  <section class="container page">
+    <div class="header">
+      <h1>Writing</h1>
+      <p>Thoughts on building, AI, design, and the founder journey.</p>
+    </div>
+
+    {allTags.length > 0 && (
+      <div class="tag-bar">
+        {allTags.map(t => <span class="tag">{t}</span>)}
+      </div>
+    )}
+
+    {posts.length === 0 ? (
+      <p class="empty">No posts yet. Check back soon.</p>
+    ) : (
+      <div class="posts">
+        {posts.map(p => (
+          <PostCard
+            title={p.data.title}
+            description={p.data.description}
+            date={p.data.date}
+            tags={p.data.tags}
+            slug={p.id}
+          />
+        ))}
+      </div>
+    )}
+  </section>
+</Base>
+
+<style>
+  .page { padding: 4rem 0; }
+
+  .header { margin-bottom: 2.5rem; }
+
+  h1 { font-size: clamp(2rem, 5vw, 3rem); margin-bottom: 0.75rem; }
+
+  p { color: var(--text-muted); max-width: 480px; }
+
+  .tag-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 2.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .posts { display: grid; gap: 1rem; }
+
+  .empty { color: var(--text-muted); font-style: italic; }
+</style>

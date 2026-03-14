@@ -1,0 +1,96 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  tags: string[];
+  status: 'live' | 'in-progress' | 'archived';
+  url?: string;
+  github?: string;
+  image?: string;
+  slug: string;
+}
+
+const { title, description, tags, status, url, github, image, slug } = Astro.props;
+---
+
+<div class="card">
+  {image && (
+    <a href={`/projects/${slug}`}>
+      <img src={image} alt={title} class="thumb" />
+    </a>
+  )}
+  <div class="body">
+    <div class="top">
+      <span class={`badge ${status}`}>{status}</span>
+      <div class="tags">{tags.slice(0, 3).map(tag => <span class="tag">{tag}</span>)}</div>
+    </div>
+    <a href={`/projects/${slug}`}><h3>{title}</h3></a>
+    <p>{description}</p>
+    <div class="links">
+      <a href={`/projects/${slug}`} class="link-details">Details →</a>
+      {url && <a href={url} target="_blank" rel="noopener" class="link-ext">Live ↗</a>}
+      {github && <a href={github} target="_blank" rel="noopener" class="link-ext">GitHub ↗</a>}
+    </div>
+  </div>
+</div>
+
+<style>
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card:hover { border-color: var(--border-strong); transform: translateY(-1px); }
+
+  .thumb {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+  }
+
+  .body {
+    padding: 1.1rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+  }
+
+  .top {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .tags { display: flex; gap: 0.3rem; flex-wrap: wrap; }
+
+  h3 { font-size: 1rem; }
+
+  p { font-size: 0.85rem; color: var(--text-muted); flex: 1; }
+
+  .links {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.25rem;
+    flex-wrap: wrap;
+  }
+
+  .link-details {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+  .card:hover .link-details { color: var(--text); }
+
+  .link-ext {
+    font-size: 0.82rem;
+    color: var(--text-faint);
+  }
+  .link-ext:hover { color: var(--text-muted); }
+</style>

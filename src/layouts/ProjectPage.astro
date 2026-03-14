@@ -1,0 +1,128 @@
+---
+import Base from './Base.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  tags: string[];
+  status: 'live' | 'in-progress' | 'archived';
+  url?: string;
+  github?: string;
+  image?: string;
+}
+
+const { title, description, tags, status, url, github, image } = Astro.props;
+---
+
+<Base title={title} description={description} image={image}>
+  <article>
+    <div class="hero">
+      {image && <img class="cover" src={image} alt={title} />}
+      <div class="container">
+        <div class="meta">
+          <span class={`badge ${status}`}>{status}</span>
+          <div class="tags">
+            {tags.map(tag => <span class="tag">{tag}</span>)}
+          </div>
+        </div>
+        <h1>{title}</h1>
+        <p class="lead">{description}</p>
+
+        <div class="links">
+          {url && (
+            <a href={url} target="_blank" rel="noopener" class="btn btn-primary">
+              View live ↗
+            </a>
+          )}
+          {github && (
+            <a href={github} target="_blank" rel="noopener" class="btn btn-ghost">
+              GitHub ↗
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="prose">
+        <slot />
+      </div>
+
+      <div class="back-link">
+        <a href="/projects">← All projects</a>
+      </div>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .hero {
+    padding: 4rem 0 2.5rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 3rem;
+  }
+
+  .cover {
+    width: 100%;
+    max-height: 420px;
+    object-fit: cover;
+    border-radius: var(--radius);
+    margin-bottom: 2.5rem;
+  }
+
+  .meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+
+  .tags { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    margin-bottom: 1rem;
+  }
+
+  .lead {
+    font-size: 1.1rem;
+    color: var(--text-muted);
+    max-width: 600px;
+    margin-bottom: 1.75rem;
+  }
+
+  .links { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.55rem 1.25rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.15s;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #0e0e0e;
+  }
+  .btn-primary:hover { opacity: 0.88; color: #0e0e0e; }
+
+  .btn-ghost {
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
+
+  .back-link {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.9rem;
+    color: var(--text-muted);
+  }
+
+  .back-link a:hover { color: var(--accent); }
+</style>

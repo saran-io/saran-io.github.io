@@ -1,0 +1,74 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  date: Date;
+  tags: string[];
+  slug: string;
+}
+
+const { title, description, date, tags, slug } = Astro.props;
+
+const formattedDate = new Intl.DateTimeFormat('en-US', {
+  year: 'numeric', month: 'short', day: 'numeric',
+}).format(date);
+---
+
+<a href={`/blog/${slug}`} class="card">
+  <div class="top">
+    <time datetime={date.toISOString()}>{formattedDate}</time>
+    <div class="tags">
+      {tags.slice(0, 3).map(tag => <span class="tag">{tag}</span>)}
+    </div>
+  </div>
+  <h3>{title}</h3>
+  <p>{description}</p>
+  <span class="read-more">Read post →</span>
+</a>
+
+<style>
+  .card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1.25rem 1.5rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .card:hover {
+    border-color: var(--border-strong);
+    transform: translateY(-1px);
+    color: inherit;
+  }
+
+  .top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  time { font-size: 0.78rem; color: var(--text-faint); }
+  .tags { display: flex; gap: 0.35rem; }
+
+  h3 { font-size: 1.05rem; margin-top: 0.1rem; }
+
+  p {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    flex: 1;
+  }
+
+  .read-more {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 0.25rem;
+    font-weight: 500;
+  }
+
+  .card:hover .read-more { color: var(--text); }
+</style>

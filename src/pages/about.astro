@@ -1,0 +1,42 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="About — Saran" description="A little about me — builder, founder, and occasional writer.">
+  <section class="container page">
+    <h1>About me</h1>
+
+    <div class="prose">
+      <p>
+        Hey, I'm Saran — a builder and founder working at the intersection of
+        AI, product design, and software. I spend most of my time building
+        tools that make complex things feel simple.
+      </p>
+
+      <p>
+        This site is where I document what I'm working on, share things I learn,
+        and publish my thinking on building products.
+      </p>
+
+      <h2>What I'm building</h2>
+      <p>
+        Currently focused on [your current focus]. Previously worked on [past experience].
+      </p>
+
+      <h2>Get in touch</h2>
+      <p>
+        Best way to reach me is on <a href="https://twitter.com/">Twitter</a> or
+        by <a href="mailto:you@example.com">email</a>.
+      </p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .page { padding: 4rem 0; max-width: 640px; }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    margin-bottom: 2.5rem;
+  }
+</style>

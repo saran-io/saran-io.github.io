@@ -1,0 +1,125 @@
+---
+const links = [
+  { label: 'Projects', href: '/projects' },
+  { label: 'Blog', href: '/blog' },
+  { label: 'About', href: '/about' },
+];
+
+const current = Astro.url.pathname;
+---
+
+<header>
+  <nav class="container">
+    <a href="/" class="logo">saran<span>.</span></a>
+    <ul>
+      {links.map(({ label, href }) => (
+        <li>
+          <a href={href} class:list={[{ active: current.startsWith(href) }]}>
+            {label}
+          </a>
+        </li>
+      ))}
+    </ul>
+    <button class="menu-toggle" aria-label="Toggle menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+</header>
+
+<script>
+  const toggle = document.querySelector('.menu-toggle') as HTMLButtonElement;
+  const ul = document.querySelector('header ul') as HTMLUListElement;
+  toggle?.addEventListener('click', () => {
+    const open = ul.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', String(open));
+  });
+</script>
+
+<style>
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255, 255, 255, 0.88);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 60px;
+    position: relative;
+  }
+
+  .logo {
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.3rem;
+    letter-spacing: -0.03em;
+    color: var(--text);
+    z-index: 1;
+  }
+  .logo span { color: var(--text-muted); }
+  .logo:hover { color: var(--text); }
+
+  ul {
+    display: flex;
+    list-style: none;
+    gap: 2rem;
+  }
+
+  ul a {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    transition: color 0.15s;
+  }
+  ul a:hover, ul a.active { color: var(--text); }
+
+  /* Hamburger */
+  .menu-toggle {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    z-index: 1;
+  }
+
+  .menu-toggle span {
+    display: block;
+    width: 22px;
+    height: 1.5px;
+    background: var(--text);
+    transition: all 0.2s;
+  }
+
+  @media (max-width: 600px) {
+    .menu-toggle { display: flex; }
+
+    ul {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      flex-direction: column;
+      gap: 0;
+      padding: 0.5rem 0;
+    }
+
+    ul.open { display: flex; }
+
+    ul li a {
+      display: block;
+      padding: 0.75rem 1.25rem;
+      font-size: 1rem;
+    }
+  }
+</style>
