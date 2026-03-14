@@ -3,5 +3,4 @@ import { defineConfig } from 'astro/config';
 
 export default defineConfig({
   site: 'https://saran-io.github.io',
-  base: '/personal-site',
 });
