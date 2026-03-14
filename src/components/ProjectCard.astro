@@ -10,87 +10,82 @@ interface Props {
   slug: string;
 }
 
-const { title, description, tags, status, url, github, image, slug } = Astro.props;
+const { title, description, status, url, github, slug } = Astro.props;
 ---
 
-<div class="card">
-  {image && (
-    <a href={`/projects/${slug}`}>
-      <img src={image} alt={title} class="thumb" />
-    </a>
-  )}
-  <div class="body">
-    <div class="top">
-      <span class={`badge ${status}`}>{status}</span>
-      <div class="tags">{tags.slice(0, 3).map(tag => <span class="tag">{tag}</span>)}</div>
-    </div>
-    <a href={`/projects/${slug}`}><h3>{title}</h3></a>
-    <p>{description}</p>
-    <div class="links">
-      <a href={`/projects/${slug}`} class="link-details">Details →</a>
-      {url && <a href={url} target="_blank" rel="noopener" class="link-ext">Live ↗</a>}
-      {github && <a href={github} target="_blank" rel="noopener" class="link-ext">GitHub ↗</a>}
-    </div>
+<a href={`/projects/${slug}`} class="card">
+  <div class="top">
+    <span class="title">{title}</span>
+    <span class={`dot ${status}`}></span>
   </div>
-</div>
+  <p>{description}</p>
+  {(url || github) && (
+    <div class="links">
+      {url && <a href={url} target="_blank" rel="noopener" onclick="event.stopPropagation()">Live ↗</a>}
+      {github && <a href={github} target="_blank" rel="noopener" onclick="event.stopPropagation()">GitHub ↗</a>}
+    </div>
+  )}
+</a>
 
 <style>
   .card {
-    background: var(--bg-card);
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 0.9rem 1rem;
     border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-    transition: border-color 0.2s, transform 0.2s;
-    display: flex;
-    flex-direction: column;
+    border-radius: 8px;
+    transition: border-color 0.15s;
+    color: inherit;
   }
 
-  .card:hover { border-color: var(--border-strong); transform: translateY(-1px); }
-
-  .thumb {
-    width: 100%;
-    height: 160px;
-    object-fit: cover;
-  }
-
-  .body {
-    padding: 1.1rem 1.25rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    flex: 1;
-  }
+  .card:hover { border-color: var(--border-strong); color: inherit; }
 
   .top {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     gap: 0.5rem;
-    flex-wrap: wrap;
   }
 
-  .tags { display: flex; gap: 0.3rem; flex-wrap: wrap; }
+  .title {
+    font-size: 0.88rem;
+    font-weight: 500;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
-  h3 { font-size: 1rem; }
+  .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .dot.live { background: #2d9e6b; }
+  .dot.in-progress { background: #d4a017; }
+  .dot.archived { background: var(--text-faint); }
 
-  p { font-size: 0.85rem; color: var(--text-muted); flex: 1; }
+  p {
+    font-size: 0.78rem;
+    color: var(--text-faint);
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
 
   .links {
     display: flex;
-    gap: 1rem;
-    margin-top: 0.25rem;
-    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.2rem;
   }
 
-  .link-details {
-    font-size: 0.82rem;
-    color: var(--text-muted);
-    font-weight: 500;
-  }
-  .card:hover .link-details { color: var(--text); }
-
-  .link-ext {
-    font-size: 0.82rem;
+  .links a {
+    font-size: 0.72rem;
     color: var(--text-faint);
+    transition: color 0.15s;
   }
-  .link-ext:hover { color: var(--text-muted); }
+  .links a:hover { color: var(--text-muted); }
 </style>
