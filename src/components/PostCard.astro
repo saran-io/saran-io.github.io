@@ -15,60 +15,79 @@ const formattedDate = new Intl.DateTimeFormat('en-US', {
 ---
 
 <a href={`/blog/${slug}`} class="card">
-  <div class="top">
-    <time datetime={date.toISOString()}>{formattedDate}</time>
-    <div class="tags">
-      {tags.slice(0, 3).map(tag => <span class="tag">{tag}</span>)}
-    </div>
+  <time datetime={date.toISOString()}>{formattedDate}</time>
+  <div class="middle">
+    <span class="title">{title}</span>
+    <span class="desc">{description}</span>
   </div>
-  <h3>{title}</h3>
-  <p>{description}</p>
-  <span class="read-more">Read post →</span>
+  <span class="arrow">→</span>
 </a>
 
 <style>
   .card {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    padding: 1.25rem 1.5rem;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    transition: border-color 0.2s, transform 0.2s;
-  }
-
-  .card:hover {
-    border-color: var(--border-strong);
-    transform: translateY(-1px);
+    display: grid;
+    grid-template-columns: 100px 1fr auto;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid var(--border);
+    transition: color 0.15s;
     color: inherit;
   }
 
-  .top {
+  .card:first-child { border-top: 1px solid var(--border); }
+
+  .card:hover { color: inherit; }
+  .card:hover .title { color: var(--text); }
+  .card:hover .arrow { opacity: 1; transform: translateX(3px); }
+
+  time {
+    font-size: 0.78rem;
+    color: var(--text-faint);
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .middle {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 0.5rem;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
   }
 
-  time { font-size: 0.78rem; color: var(--text-faint); }
-  .tags { display: flex; gap: 0.35rem; }
-
-  h3 { font-size: 1.05rem; margin-top: 0.1rem; }
-
-  p {
-    font-size: 0.88rem;
-    color: var(--text-muted);
-    flex: 1;
-  }
-
-  .read-more {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    margin-top: 0.25rem;
+  .title {
+    font-size: 0.95rem;
     font-weight: 500;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: color 0.15s;
   }
 
-  .card:hover .read-more { color: var(--text); }
+  .desc {
+    font-size: 0.8rem;
+    color: var(--text-faint);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .arrow {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    opacity: 0;
+    transition: opacity 0.15s, transform 0.15s;
+  }
+
+  @media (max-width: 560px) {
+    .card {
+      grid-template-columns: 1fr auto;
+      gap: 0.75rem;
+    }
+
+    time { display: none; }
+
+    .desc { display: none; }
+  }
 </style>

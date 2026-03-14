@@ -36,31 +36,16 @@ const allProjects = (await getCollection('projects'))
         <h2>Latest writing</h2>
         <a href="/blog">All posts →</a>
       </div>
-      <div class="posts-featured">
-        {allPosts.slice(0, 1).map(p => (
-          <a href={`/blog/${p.id}`} class="post-hero">
-            <div class="post-hero-meta">
-              <time datetime={p.data.date.toISOString()}>
-                {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'long', day: 'numeric' }).format(p.data.date)}
-              </time>
-              <div class="tags">{p.data.tags.slice(0, 3).map((t: string) => <span class="tag">{t}</span>)}</div>
-            </div>
-            <h3>{p.data.title}</h3>
-            <p>{p.data.description}</p>
-            <span class="read-more">Read post →</span>
-          </a>
+      <div class="posts-list">
+        {allPosts.map(p => (
+          <PostCard
+            title={p.data.title}
+            description={p.data.description}
+            date={p.data.date}
+            tags={p.data.tags}
+            slug={p.id}
+          />
         ))}
-        <div class="posts-list">
-          {allPosts.slice(1).map(p => (
-            <PostCard
-              title={p.data.title}
-              description={p.data.description}
-              date={p.data.date}
-              tags={p.data.tags}
-              slug={p.id}
-            />
-          ))}
-        </div>
       </div>
     </section>
   )}
@@ -192,43 +177,5 @@ const allProjects = (await getCollection('projects'))
     .projects-grid { grid-template-columns: 1fr; }
   }
 
-  .posts-featured { display: grid; gap: 0.75rem; }
-
-  .post-hero {
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-    padding: 1.75rem;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    transition: border-color 0.2s, transform 0.2s;
-  }
-
-  .post-hero:hover { border-color: var(--border-strong); transform: translateY(-1px); color: inherit; }
-
-  .post-hero-meta {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-  }
-
-  .post-hero-meta time { font-size: 0.78rem; color: var(--text-faint); }
-  .post-hero-meta .tags { display: flex; gap: 0.35rem; }
-
-  .post-hero h3 { font-size: clamp(1.2rem, 3vw, 1.55rem); }
-
-  .post-hero p { color: var(--text-muted); font-size: 0.95rem; }
-
-  .post-hero .read-more {
-    font-size: 0.82rem;
-    color: var(--text-muted);
-    font-weight: 500;
-    margin-top: 0.25rem;
-  }
-
-  .post-hero:hover .read-more { color: var(--text); }
-
-  .posts-list { display: grid; gap: 0.75rem; }
+  .posts-list { display: flex; flex-direction: column; }
 </style>
