@@ -10,7 +10,7 @@ interface Props {
   slug: string;
 }
 
-const { title, description, status, url, github, slug } = Astro.props;
+const { title, description, status, slug } = Astro.props;
 ---
 
 <a href={`/projects/${slug}`} class="card">
@@ -19,12 +19,6 @@ const { title, description, status, url, github, slug } = Astro.props;
     <span class={`dot ${status}`}></span>
   </div>
   <p>{description}</p>
-  {(url || github) && (
-    <div class="links">
-      {url && <a href={url} target="_blank" rel="noopener" onclick="event.stopPropagation()">Live ↗</a>}
-      {github && <a href={github} target="_blank" rel="noopener" onclick="event.stopPropagation()">GitHub ↗</a>}
-    </div>
-  )}
 </a>
 
 <style>
@@ -76,16 +70,4 @@ const { title, description, status, url, github, slug } = Astro.props;
     overflow: hidden;
   }
 
-  .links {
-    display: flex;
-    gap: 0.75rem;
-    margin-top: 0.2rem;
-  }
-
-  .links a {
-    font-size: 0.72rem;
-    color: var(--text-faint);
-    transition: color 0.15s;
-  }
-  .links a:hover { color: var(--text-muted); }
 </style>
