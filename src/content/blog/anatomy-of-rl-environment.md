@@ -4,7 +4,6 @@ description: "Most people think training an AI agent is about feeding it data an
 date: 2026-03-15
 tags: ["ai", "reinforcement-learning", "agents", "engineering"]
 draft: false
-cover: "/blog/rl-environment.png"
 ---
 
 Most people think training an AI agent is about feeding it data and hoping it gets smarter.
@@ -32,6 +31,8 @@ The agent generates a solution — source code, a kernel buffer, whatever the ta
 **3. Verification & Scoring Engine (The Verifier)**
 
 This is where it gets interesting. The verifier is a full pipeline — not just a "did it compile?" check. It runs the output through four sequential steps before handing back a reward signal.
+
+![RL Environment Architecture](/blog/rl-environment.png)
 
 ## The Verifier Pipeline
 
