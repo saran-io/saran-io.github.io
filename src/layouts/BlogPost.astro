@@ -17,79 +17,168 @@ const formattedDate = new Intl.DateTimeFormat('en-US', {
 ---
 
 <Base title={title} description={description} image={cover}>
-  <article>
-    <div class="hero">
-      {cover && <img class="cover" src={cover} alt={title} />}
-      <div class="container">
-        <div class="meta">
-          <time datetime={date.toISOString()}>{formattedDate}</time>
-          <span class="sep">·</span>
-          <div class="tags">
-            {tags.map(tag => <span class="tag">{tag}</span>)}
-          </div>
-        </div>
-        <h1>{title}</h1>
-        <p class="lead">{description}</p>
+  <article class="container post">
+
+    <!-- Header -->
+    <header>
+      <div class="meta">
+        <time datetime={date.toISOString()}>{formattedDate}</time>
+        {tags.length > 0 && (
+          <>
+            <span class="dot">·</span>
+            <div class="tags">{tags.map(tag => <span class="tag">{tag}</span>)}</div>
+          </>
+        )}
       </div>
+      <h1>{title}</h1>
+      <p class="lead">{description}</p>
+    </header>
+
+    <!-- Body -->
+    <div class="prose">
+      <slot />
     </div>
 
-    <div class="container">
-      <div class="prose">
-        <slot />
-      </div>
+    <!-- Footer -->
+    <footer>
+      <a href="/blog">← Back to writing</a>
+    </footer>
 
-      <div class="back-link">
-        <a href="/blog">← All posts</a>
-      </div>
-    </div>
   </article>
 </Base>
 
 <style>
-  .hero {
-    padding: 3.5rem 0 2rem;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 2.5rem;
+  .post {
+    padding: 3rem 0 5rem;
+    max-width: 680px;
   }
 
-  .cover {
-    width: 100%;
-    max-height: 420px;
-    object-fit: cover;
-    border-radius: var(--radius);
-    margin-bottom: 2.5rem;
-  }
+  /* Header */
+  header { margin-bottom: 3rem; }
 
   .meta {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    font-size: 0.85rem;
-    color: var(--text-muted);
-    margin-bottom: 1rem;
+    margin-bottom: 1.25rem;
   }
 
-  .sep { color: var(--border); }
-  .tags { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+  .meta time {
+    font-size: 0.8rem;
+    color: var(--text-faint);
+  }
+
+  .dot { color: var(--text-faint); font-size: 0.8rem; }
+
+  .tags { display: flex; gap: 0.35rem; flex-wrap: wrap; }
 
   h1 {
-    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    line-height: 1.2;
     margin-bottom: 1rem;
+    letter-spacing: -0.02em;
   }
 
   .lead {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     color: var(--text-muted);
-    max-width: 600px;
+    line-height: 1.7;
+    border-left: 3px solid var(--border-strong);
+    padding-left: 1rem;
+    margin: 0;
   }
 
-  .back-link {
-    margin-top: 4rem;
+  /* Prose overrides for blog reading */
+  .prose { font-size: 1.02rem; line-height: 1.85; color: #222; }
+
+  .prose :global(h2) {
+    font-size: 1.45rem;
+    margin: 2.75rem 0 0.9rem;
     padding-top: 2rem;
     border-top: 1px solid var(--border);
-    font-size: 0.9rem;
-    color: var(--text-muted);
+    letter-spacing: -0.02em;
   }
 
-  .back-link a:hover { color: var(--accent); }
+  .prose :global(h3) {
+    font-size: 1.15rem;
+    margin: 2rem 0 0.6rem;
+    letter-spacing: -0.01em;
+  }
+
+  .prose :global(p) { margin-bottom: 1.4rem; }
+
+  .prose :global(strong) { color: var(--text); font-weight: 600; }
+
+  .prose :global(ul), .prose :global(ol) {
+    padding-left: 1.4rem;
+    margin-bottom: 1.4rem;
+  }
+
+  .prose :global(li) { margin-bottom: 0.5rem; }
+
+  .prose :global(img) {
+    width: 100%;
+    border-radius: var(--radius);
+    margin: 2rem 0;
+    border: 1px solid var(--border);
+  }
+
+  .prose :global(blockquote) {
+    border-left: 3px solid var(--border-strong);
+    padding: 0.25rem 0 0.25rem 1.25rem;
+    color: var(--text-muted);
+    font-style: italic;
+    margin: 1.75rem 0;
+  }
+
+  .prose :global(code) {
+    background: #f4f4f4;
+    border: 1px solid var(--border);
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+    font-size: 0.87em;
+  }
+
+  .prose :global(pre) {
+    background: #f8f8f8;
+    border: 1px solid var(--border);
+    padding: 1.25rem 1.5rem;
+    border-radius: var(--radius);
+    overflow-x: auto;
+    margin: 1.75rem 0;
+  }
+
+  .prose :global(pre code) {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 0.9em;
+    line-height: 1.6;
+  }
+
+  .prose :global(hr) {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 2.5rem 0;
+  }
+
+  .prose :global(a) {
+    color: var(--text);
+    border-bottom: 1px solid var(--border-strong);
+    transition: border-color 0.15s;
+  }
+  .prose :global(a:hover) { border-color: var(--text); }
+
+  /* Footer */
+  footer {
+    margin-top: 4rem;
+    padding-top: 1.75rem;
+    border-top: 1px solid var(--border);
+  }
+
+  footer a {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+  footer a:hover { color: var(--text); }
 </style>
