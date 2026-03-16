@@ -10,49 +10,46 @@ const allTags = [...new Set(posts.flatMap(p => p.data.tags))].sort();
 ---
 
 <Base title="Blog — Saran" description="Thoughts on building products, AI, design, and the founder journey.">
-  <div class="container">
-    <div class="page">
-      <div class="header">
-        <h1>Writing</h1>
-        <p>Thoughts on building, AI, design, and the founder journey.</p>
-      </div>
+  <div class="container page">
 
-      {allTags.length > 0 && (
-        <div class="tag-bar">
-          {allTags.map(t => <span class="tag">{t}</span>)}
-        </div>
-      )}
-
-      {posts.length === 0 ? (
-        <p class="empty">No posts yet. Check back soon.</p>
-      ) : (
-        <div class="posts">
-          {posts.map(p => (
-            <PostCard
-              title={p.data.title}
-              description={p.data.description}
-              date={p.data.date}
-              tags={p.data.tags}
-              slug={p.id}
-            />
-          ))}
-        </div>
-      )}
+    <div class="header">
+      <h1>Writing</h1>
+      <p>Thoughts on building, AI, design, and the founder journey.</p>
     </div>
+
+    {allTags.length > 0 && (
+      <div class="tag-bar">
+        {allTags.map(t => <span class="tag">{t}</span>)}
+      </div>
+    )}
+
+    {posts.length === 0 ? (
+      <p class="empty">No posts yet. Check back soon.</p>
+    ) : (
+      <div class="posts">
+        {posts.map(p => (
+          <PostCard
+            title={p.data.title}
+            description={p.data.description}
+            date={p.data.date}
+            tags={p.data.tags}
+            slug={p.id}
+          />
+        ))}
+      </div>
+    )}
+
   </div>
 </Base>
 
 <style>
-  .page {
-    padding: 3rem 0 5rem;
-    max-width: 660px;
-  }
+  .page { padding: 3rem 0 5rem; }
 
   .header { margin-bottom: 2rem; }
 
-  h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+  h1 { font-size: 1.8rem; margin-bottom: 0.4rem; }
 
-  p { font-size: 0.88rem; color: var(--text-muted); }
+  .header p { font-size: 0.88rem; color: var(--text-muted); }
 
   .tag-bar {
     display: flex;
