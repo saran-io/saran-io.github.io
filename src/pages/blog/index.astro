@@ -10,7 +10,8 @@ const allTags = [...new Set(posts.flatMap(p => p.data.tags))].sort();
 ---
 
 <Base title="Blog — Saran" description="Thoughts on building products, AI, design, and the founder journey.">
-  <div class="container page">
+  <div class="container">
+    <div class="page">
 
     <div class="header">
       <h1>Writing</h1>
@@ -39,6 +40,7 @@ const allTags = [...new Set(posts.flatMap(p => p.data.tags))].sort();
       </div>
     )}
 
+    </div>
   </div>
 </Base>
 
