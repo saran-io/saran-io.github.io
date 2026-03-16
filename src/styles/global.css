@@ -12,8 +12,8 @@
   --accent: #111111;
   --accent-dim: rgba(17, 17, 17, 0.06);
   --radius: 10px;
-  --max-w: 860px;
-  --max-w-wide: 1140px;
+  --max-w: 1200px;
+  --max-w-wide: 1200px;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -46,16 +46,22 @@ img { max-width: 100%; display: block; }
 .container {
   max-width: var(--max-w);
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 3rem;
+  width: 100%;
 }
 
 .container-wide {
   max-width: var(--max-w-wide);
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 3rem;
+  width: 100%;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 900px) {
+  .container, .container-wide { padding: 0 2rem; }
+}
+
+@media (max-width: 560px) {
   .container, .container-wide { padding: 0 1.25rem; }
 }
 
