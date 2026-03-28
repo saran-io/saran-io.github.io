@@ -8,6 +8,8 @@ draft: false
 
 Large language models feel like black boxes until you train one yourself. I built **Tamil Tiny LLM**—a small GPT-style model that generates Tamil text—end to end in PyTorch. This post covers what it is, how the pipeline works, and what I’d tell anyone repeating the experiment.
 
+The full project—configs, scripts, training loop, and sampling—is open source on GitHub: **[saran-io/tamil-tiny-gpt](https://github.com/saran-io/tamil-tiny-gpt)**. Clone it, run the pipeline on your own corpus, or use it as a teaching reference. There is also a longer write-up in the repo under `docs/` if you want diagrams and a quick-start in one place.
+
 ## What is this model?
 
 It is a **decoder-only Transformer**. Given a sequence of token IDs, it predicts the next token at each position. During training, the loss is standard cross-entropy over the vocabulary. At inference, you feed a prompt and repeatedly sample the next token until you have enough text.
@@ -43,6 +45,10 @@ The model memorizes patterns in the training text: common phrases, sentence rhyt
 ## Next steps
 
 More text, longer training with early stopping when validation loss stops improving, optionally a smaller model for tiny datasets, and tighter sampling settings if outputs loop.
+
+## Collaborators & researchers
+
+If you are working on **low-resource languages**, **Tamil NLP**, or **small-model training** and want to extend this stack—better data recipes, evals, or architecture experiments—I would love to hear from you. Open an issue or pull request on [tamil-tiny-gpt](https://github.com/saran-io/tamil-tiny-gpt), or reach out through the contact links on [my site](/about). The repo is MIT-licensed; contributions and citations are welcome.
 
 ---
 
