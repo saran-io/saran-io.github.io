@@ -33,13 +33,13 @@ What follows is a concrete audit: the issue, what it breaks, and which ones are 
 
 ## The seven faults
 
-### Unicode normalization (Handled)
+### Unicode normalization
 
 Tamil uses two-part vowel signs. Depending on NFC/NFD state, the same visible glyph can be represented by different code-point sequences. A tokenizer can then split the same word differently across files.
 
 Applying NFC with `indic_nlp_library` is the right first step and is usually present in modern pipelines.
 
-### Legacy encoding (TSCII) (Not handled)
+### Legacy encoding (TSCII)
 
 A large volume of Tamil text exists in pre-Unicode encodings like TSCII. If read as UTF-8/Latin-1, this becomes mojibake and effectively unusable text.
 
@@ -52,31 +52,31 @@ def decode_tscii(raw_bytes):
     return raw_bytes.decode("tscii", errors="replace")
 ```
 
-### Agglutinative morphology (Not handled)
+### Agglutinative morphology
 
 Tamil packs tense, person, number, case, and more into long surface forms. Naive BPE over-allocates vocabulary to inflected one-offs instead of reusable morphemes.
 
 You need morphology-aware preprocessing before BPE training for better token efficiency and generalization.
 
-### Thanglish / romanized Tamil (Not collected)
+### Thanglish / romanized Tamil
 
 Romanized Tamil (Thanglish) dominates social and conversational channels. Script-only corpora miss this register and bias models toward formal Tamil.
 
 Without explicit detection/routing, this data is invisible.
 
-### Sandhi (Not handled)
+### Sandhi
 
 Sandhi joins forms at boundaries where subword tokenizers are least reliable. Naive segmentation tends to cut at loss-optimal but linguistically wrong positions.
 
 Reverse-sandhi processing before tokenization materially improves segmentation quality.
 
-### Dialect variation (Not collected)
+### Dialect variation
 
 Sri Lankan and Malaysian Tamil are not minor accent variants; lexical and structural differences matter for downstream quality.
 
 If corpus collection is not dialect-stratified, models overfit Indian Tamil norms and underperform out-of-distribution.
 
-### Code-switching detection (Partial)
+### Code-switching detection
 
 Tamil-English mixing is common. Many systems flag mixed documents, but then exclude them from training rather than process them at token level.
 
