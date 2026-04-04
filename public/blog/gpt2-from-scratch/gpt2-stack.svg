@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 980" role="img" aria-labelledby="g2t g2d">
+  <title id="g2t">GPT-2 decoder stack — data flow</title>
+  <desc id="g2d">From text through embeddings, twelve transformer blocks, to vocabulary logits.</desc>
+  <defs>
+    <linearGradient id="pipe" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#111" stop-opacity="0.06"/>
+      <stop offset="50%" stop-color="#111" stop-opacity="0.14"/>
+      <stop offset="100%" stop-color="#111" stop-opacity="0.06"/>
+    </linearGradient>
+    <filter id="soft" x="-5%" y="-5%" width="110%" height="110%">
+      <feDropShadow dx="0" dy="1" stdDeviation="2" flood-opacity="0.06"/>
+    </filter>
+    <marker id="arr" markerWidth="7" markerHeight="7" refX="6" refY="3.5" orient="auto">
+      <polygon points="0 0, 7 3.5, 0 7" fill="#999"/>
+    </marker>
+  </defs>
+  <rect width="720" height="980" fill="#fafafa"/>
+  <text x="360" y="44" text-anchor="middle" font-size="20" font-weight="700" fill="#111" font-family="system-ui,sans-serif">GPT-2 (124M) — forward pass</text>
+  <text x="360" y="68" text-anchor="middle" font-size="12" fill="#777" font-family="system-ui,sans-serif">Decoder-only transformer · causal language model</text>
+
+  <g filter="url(#soft)">
+    <rect x="60" y="92" width="600" height="52" rx="10" fill="#fff" stroke="#d8d8d8" stroke-width="1.5"/>
+    <text x="360" y="118" text-anchor="middle" font-size="13" font-weight="600" fill="#111" font-family="system-ui,sans-serif">Raw text</text>
+    <text x="360" y="136" text-anchor="middle" font-size="11" fill="#555" font-family="ui-monospace,monospace">The future of AI is ...</text>
+  </g>
+  <path d="M360 144 v18" stroke="#bbb" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+
+  <g filter="url(#soft)">
+    <rect x="60" y="170" width="600" height="56" rx="10" fill="#fff" stroke="#d8d8d8" stroke-width="1.5"/>
+    <text x="360" y="198" text-anchor="middle" font-size="13" font-weight="600" fill="#111" font-family="system-ui,sans-serif">BPE tokenizer</text>
+    <text x="360" y="216" text-anchor="middle" font-size="11" fill="#555" font-family="ui-monospace,monospace">token IDs · vocab 50,257</text>
+  </g>
+  <path d="M360 226 v18" stroke="#bbb" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+
+  <g filter="url(#soft)">
+    <rect x="60" y="252" width="290" height="64" rx="10" fill="#f5f5f5" stroke="#ccc" stroke-width="1.5"/>
+    <text x="205" y="280" text-anchor="middle" font-size="12" font-weight="600" fill="#111" font-family="system-ui,sans-serif">Token embedding</text>
+    <text x="205" y="300" text-anchor="middle" font-size="10" fill="#666" font-family="system-ui,sans-serif">W_e  50,257 x 768</text>
+    <rect x="370" y="252" width="290" height="64" rx="10" fill="#f5f5f5" stroke="#ccc" stroke-width="1.5"/>
+    <text x="515" y="280" text-anchor="middle" font-size="12" font-weight="600" fill="#111" font-family="system-ui,sans-serif">Position embedding</text>
+    <text x="515" y="300" text-anchor="middle" font-size="10" fill="#666" font-family="system-ui,sans-serif">1024 positions x 768</text>
+  </g>
+  <text x="360" y="338" text-anchor="middle" font-size="18" fill="#111" font-weight="600" font-family="system-ui,sans-serif">+</text>
+  <path d="M360 342 v14" stroke="#bbb" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+
+  <g filter="url(#soft)">
+    <rect x="140" y="362" width="440" height="44" rx="8" fill="#fff" stroke="#111" stroke-width="1.5"/>
+    <text x="360" y="390" text-anchor="middle" font-size="12" font-weight="600" fill="#111" font-family="system-ui,sans-serif">Dropout · residual stream (768-d)</text>
+  </g>
+  <path d="M360 406 v20" stroke="#bbb" stroke-width="2" fill="none" marker-end="url(#arr)"/>
+
+  <rect x="48" y="432" width="624" height="388" rx="14" fill="url(#pipe)" stroke="#c8c8c8" stroke-width="1.5"/>
+  <text x="360" y="458" text-anchor="middle" font-size="11" font-weight="700" fill="#444" letter-spacing="0.12em" font-family="system-ui,sans-serif">REPEAT 12 TIMES</text>
+  <text x="360" y="476" text-anchor="middle" font-size="10" fill="#888" font-family="system-ui,sans-serif">Same block shape, different learned weights each layer</text>
+
+  <g filter="url(#soft)">
+    <rect x="80" y="492" width="560" height="148" rx="10" fill="#fff" stroke="#d0d0d0" stroke-width="1.5"/>
+    <text x="110" y="518" font-size="11" font-weight="700" fill="#2563eb" font-family="system-ui,sans-serif">A</text>
+    <text x="128" y="518" font-size="12" font-weight="600" fill="#111" font-family="system-ui,sans-serif">Pre-norm self-attention</text>
+    <text x="128" y="538" font-size="10" fill="#666" font-family="system-ui,sans-serif">LayerNorm, then 12 heads x 64-d, dropout</text>
+    <text x="128" y="556" font-size="10" fill="#666" font-family="system-ui,sans-serif">Causal mask: token i may attend only to positions j &lt;= i</text>
+    <rect x="100" y="568" width="520" height="56" rx="6" fill="#f0f7ff" stroke="#93c5fd" stroke-width="1"/>
+    <text x="360" y="590" text-anchor="middle" font-size="10" fill="#1e40af" font-family="ui-monospace,monospace">out = x + Attention(LayerNorm(x))</text>
+    <text x="360" y="610" text-anchor="middle" font-size="10" fill="#1e40af" font-family="ui-monospace,monospace">residual around attention (pre-norm)</text>
+  </g>
+
+  <path d="M360 640 v12" stroke="#999" stroke-width="1.5" fill="none" marker-end="url(#arr)"/>
+
+  <g filter="url(#soft)">
+    <rect x="80" y="656" width="560" height="140" rx="10" fill="#fff" stroke="#d0d0d0" stroke-width="1.5"/>
+    <text x="110" y="682" font-size="11" font-weight="700" fill="#059669" font-family="system-ui,sans-serif">B</text>
+    <text x="128" y="682" font-size="12" font-weight="600" fill="#111" font-family="system-ui,sans-serif">Pre-norm feed-forward</text>
+    <text x="128" y="702" font-size="10" fill="#666" font-family="system-ui,sans-serif">LayerNorm, Linear 768 to 3072, GELU, Linear 3072 to 768, dropout</text>
+    <rect x="100" y="712" width="520" height="68" rx="6" fill="#ecfdf5" stroke="#6ee7b7" stroke-width="1"/>
+    <text x="360" y="736" text-anchor="middle" font-size="10" fill="#065f46" font-family="ui-monospace,monospace">out = x + FFN(LayerNorm(x))</text>
+    <text x="360" y="756" text-anchor="middle" font-size="10" fill="#065f46" font-family="system-ui,sans-serif">GELU MLP: mix and refine attended information</text>
+  </g>
+
+  <path d="M360 828 v18" stroke="#bbb" stroke-width="2" fill="none" marker-end="url(#arr)"/>
+
+  <g filter="url(#soft)">
+    <rect x="100" y="852" width="520" height="48" rx="10" fill="#fff" stroke="#111" stroke-width="1.5"/>
+    <text x="360" y="872" text-anchor="middle" font-size="12" font-weight="600" fill="#111" font-family="system-ui,sans-serif">Final LayerNorm, LM head (weight-tied with W_e)</text>
+    <text x="360" y="890" text-anchor="middle" font-size="10" fill="#666" font-family="system-ui,sans-serif">logits over 50,257 tokens, softmax, sample next token</text>
+  </g>
+</svg>

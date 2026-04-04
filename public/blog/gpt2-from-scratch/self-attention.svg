@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" aria-labelledby="sat satd">
+  <title id="sat">Scaled dot-product self-attention (one head)</title>
+  <desc id="satd">Query, key, value projections, scaled scores, causal mask, softmax, weighted values.</desc>
+  <defs>
+    <filter id="s1" x="-3%" y="-3%" width="106%" height="106%">
+      <feDropShadow dx="0" dy="1" stdDeviation="1.5" flood-opacity="0.07"/>
+    </filter>
+    <linearGradient id="flow" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#2563eb" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#059669" stop-opacity="0.12"/>
+    </linearGradient>
+  </defs>
+  <rect width="720" height="320" fill="#fafafa"/>
+  <text x="360" y="36" text-anchor="middle" font-size="18" font-weight="700" fill="#111" font-family="system-ui,sans-serif">Self-attention (single head)</text>
+  <text x="360" y="56" text-anchor="middle" font-size="11" fill="#777" font-family="system-ui,sans-serif">Same block runs 12 heads in parallel; shown here for one head of dimension d_k = 64</text>
+
+  <rect x="24" y="78" width="672" height="214" rx="12" fill="url(#flow)" stroke="#e0e0e0" stroke-width="1"/>
+
+  <!-- Step boxes -->
+  <g filter="url(#s1)">
+    <rect x="40" y="98" width="118" height="88" rx="8" fill="#fff" stroke="#ccc" stroke-width="1.5"/>
+    <text x="99" y="122" text-anchor="middle" font-size="10" font-weight="700" fill="#2563eb" font-family="system-ui,sans-serif">1</text>
+    <text x="99" y="140" text-anchor="middle" font-size="11" font-weight="600" fill="#111" font-family="system-ui,sans-serif">Project</text>
+    <text x="99" y="158" text-anchor="middle" font-size="9" fill="#555" font-family="ui-monospace,monospace">Q = X W_Q</text>
+    <text x="99" y="172" text-anchor="middle" font-size="9" fill="#555" font-family="ui-monospace,monospace">K = X W_K</text>
+    <text x="99" y="186" text-anchor="middle" font-size="9" fill="#555" font-family="ui-monospace,monospace">V = X W_V</text>
+  </g>
+
+  <text x="176" y="148" font-size="20" fill="#aaa" font-family="system-ui,sans-serif">&#8594;</text>
+
+  <g filter="url(#s1)">
+    <rect x="196" y="98" width="132" height="88" rx="8" fill="#fff" stroke="#ccc" stroke-width="1.5"/>
+    <text x="262" y="122" text-anchor="middle" font-size="10" font-weight="700" fill="#7c3aed" font-family="system-ui,sans-serif">2</text>
+    <text x="262" y="140" text-anchor="middle" font-size="11" font-weight="600" fill="#111" font-family="system-ui,sans-serif">Scores</text>
+    <text x="262" y="162" text-anchor="middle" font-size="9" fill="#555" font-family="ui-monospace,monospace">S = Q K^T / sqrt(d_k)</text>
+    <text x="262" y="178" text-anchor="middle" font-size="9" fill="#666" font-family="system-ui,sans-serif">scaling keeps softmax stable</text>
+  </g>
+
+  <text x="346" y="148" font-size="20" fill="#aaa">&#8594;</text>
+
+  <g filter="url(#s1)">
+    <rect x="366" y="98" width="124" height="88" rx="8" fill="#fff" stroke="#f59e0b" stroke-width="1.5"/>
+    <text x="428" y="122" text-anchor="middle" font-size="10" font-weight="700" fill="#d97706" font-family="system-ui,sans-serif">3</text>
+    <text x="428" y="140" text-anchor="middle" font-size="11" font-weight="600" fill="#111" font-family="system-ui,sans-serif">Causal mask</text>
+    <text x="428" y="162" text-anchor="middle" font-size="9" fill="#555" font-family="system-ui,sans-serif">future positions</text>
+    <text x="428" y="176" text-anchor="middle" font-size="9" fill="#555" font-family="system-ui,sans-serif">set to -inf</text>
+  </g>
+
+  <text x="506" y="148" font-size="20" fill="#aaa">&#8594;</text>
+
+  <g filter="url(#s1)">
+    <rect x="526" y="98" width="154" height="88" rx="8" fill="#fff" stroke="#ccc" stroke-width="1.5"/>
+    <text x="603" y="122" text-anchor="middle" font-size="10" font-weight="700" fill="#059669" font-family="system-ui,sans-serif">4</text>
+    <text x="603" y="140" text-anchor="middle" font-size="11" font-weight="600" fill="#111" font-family="system-ui,sans-serif">Mix values</text>
+    <text x="603" y="162" text-anchor="middle" font-size="9" fill="#555" font-family="ui-monospace,monospace">A = softmax(S)</text>
+    <text x="603" y="176" text-anchor="middle" font-size="9" fill="#555" font-family="ui-monospace,monospace">out = A V</text>
+  </g>
+
+  <g filter="url(#s1)">
+    <rect x="120" y="210" width="480" height="64" rx="8" fill="#111" stroke="#111" stroke-width="1.5"/>
+    <text x="360" y="236" text-anchor="middle" font-size="11" font-weight="600" fill="#fff" font-family="ui-monospace,monospace">Multi-head: concat head outputs, then W_O linear (768 x 768)</text>
+    <text x="360" y="256" text-anchor="middle" font-size="10" fill="#ccc" font-family="system-ui,sans-serif">Residual connection adds this back into the main stream before the FFN sublayer</text>
+  </g>
+</svg>

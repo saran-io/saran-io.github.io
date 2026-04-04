@@ -1,0 +1,58 @@
+---
+title: "Building GPT-2 From Scratch (and Loading Real Weights)"
+description: "Week 1 of a 24-model series: implement every layer in PyTorch, load OpenAI's checkpoint, and see why today's LLMs are still this architecture."
+date: 2026-04-04
+tags: ["llm", "pytorch", "gpt-2", "transformers", "engineering", "model-atlas"]
+draft: false
+---
+
+This is **week 1** of my open notebook on AI models: one model a week, always with runnable code and diagrams. The series lives in **[model-atlas](https://github.com/saran-io/model-atlas)** on GitHub — clone it if you want the full implementation, tests, and Mermaid sources.
+
+GPT-2 sounds like history. It is not. **GPT-4-class models, Claude, Llama, and DeepSeek still share the same skeleton**: decoder-only transformer, causal self-attention, pre-norm residuals, token prediction at the end. The differences are scale, data, and a long list of optimizations — not a different animal.
+
+## What I built
+
+A **from-scratch GPT-2 (124M)** in PyTorch: explicit `Linear`, `LayerNorm`, multi-head attention, GELU FFN, weight tying on the LM head — no `AutoModel` shortcut for the core forward pass. Then I **loaded the real checkpoint** so generations match the reference behavior. If one shape is wrong, the load fails or the logits are nonsense; passing that test is the proof the code matches the math.
+
+```bash
+git clone https://github.com/saran-io/model-atlas.git
+cd model-atlas/models/01-gpt2-from-scratch/code
+python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+python gpt2.py --prompt "The future of AI is" --max_tokens 80
+python gpt2.py --visualize --viz_text "The cat sat on the mat"
+```
+
+## The stack (one screen)
+
+This diagram is **hand-authored SVG** (not a Mermaid export) so it stays sharp on retina displays and matches the rest of the site.
+
+![GPT-2 forward pass from text to logits](/blog/gpt2-from-scratch/gpt2-stack.svg)
+
+**How to read it:** bytes become token IDs, IDs become vectors (token + position), then the same block runs twelve times: **attention mixes information across positions**, **FFN refines it per position**, residuals keep gradients healthy. The LM head is tied to the input embedding matrix — predicting token *k* and representing token *k* share one learned space.
+
+## Self-attention in one pass
+
+Same story every modern LLM tells, with small variants (GQA, RoPE, etc.) layered on later.
+
+![Scaled dot-product attention with causal mask](/blog/gpt2-from-scratch/self-attention.svg)
+
+The **1/√d_k** scaling is load-bearing. I removed it once with correct weights loaded: garbage output. Softmax saturates, gradients vanish. One division is the difference between a toy and a model.
+
+## Animated explainer
+
+For talks and teaching, there is a **lightweight HTML/CSS animation** (token strip, causal mask toy, signal down the stack). It lives on this site so you can link it directly:
+
+**[Open the animated explainer](/labs/gpt2-explainer/)** · [source in model-atlas](https://github.com/saran-io/model-atlas/tree/main/models/01-gpt2-from-scratch/explainer)
+
+## Why this matters if you ship agents
+
+At **Tekvo** I spend most days inside LLM APIs and agent loops. Internals are not academic: they explain **why context length drives cost**, **why tokenizer edge cases become production bugs**, and **why hallucinations correlate with attention landing on the wrong context**. Starting from GPT-2 makes every stack trace and paper diagram legible.
+
+## What is next
+
+Week 2 in the repo is **GPT-4o vs GPT-4.1** on real agentic workloads — not leaderboard scores, tasks that look like production.
+
+---
+
+If you are learning LLMs, implement **one** classic model end to end before you chase the next API release. GPT-2 is still the best compressed lesson in how the industry builds language models.
