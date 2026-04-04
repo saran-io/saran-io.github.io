@@ -1,0 +1,98 @@
+---
+/**
+ * GPT-2 forward pass — semantic HTML + diagram-kit.css (no raster/SVG image).
+ */
+---
+<figure class="diag-flow" aria-labelledby="gpt2-stack-title">
+  <figcaption id="gpt2-stack-title" class="sr-only">GPT-2 decoder: from text to next-token logits</figcaption>
+
+  <section class="diag-node" aria-label="Input text">
+    <p class="diag-node__title">Raw text</p>
+    <p class="diag-node__sub"><kbd class="diag-kbd">The future of AI is …</kbd></p>
+  </section>
+  <div class="diag-arrow" aria-hidden="true"></div>
+
+  <section class="diag-node" aria-label="Tokenization">
+    <p class="diag-node__title">BPE tokenizer</p>
+    <p class="diag-node__sub">Subword pieces mapped to vocabulary IDs.</p>
+    <code class="diag-node__code">token IDs · vocab 50,257</code>
+  </section>
+  <div class="diag-arrow" aria-hidden="true"></div>
+
+  <div class="diag-row" role="group" aria-label="Embeddings">
+    <section class="diag-node diag-node--muted">
+      <p class="diag-node__title">Token embedding</p>
+      <p class="diag-node__sub">W<sub>e</sub> · 50,257 × 768</p>
+    </section>
+    <section class="diag-node diag-node--muted">
+      <p class="diag-node__title">Position embedding</p>
+      <p class="diag-node__sub">1,024 positions × 768</p>
+    </section>
+  </div>
+  <p class="diag-join" aria-hidden="true">+</p>
+  <div class="diag-arrow diag-arrow--tall" aria-hidden="true"></div>
+
+  <section class="diag-node diag-node--emphasis" aria-label="Dropout">
+    <p class="diag-node__title">Dropout · residual stream</p>
+    <p class="diag-node__sub">768-dimensional hidden state enters the transformer blocks.</p>
+  </section>
+  <div class="diag-arrow diag-arrow--tall" aria-hidden="true"></div>
+
+  <section class="diag-band" aria-label="Twelve transformer blocks">
+    <p class="diag-band__label">Repeat 12 times</p>
+    <p class="diag-band__hint">Same block shape; different learned weights per layer.</p>
+
+    <div class="diag-flow">
+      <section class="diag-sublane diag-sublane--attn" aria-label="Self-attention sublayer">
+        <span class="diag-sublane__badge" aria-hidden="true">A</span>
+        <span class="diag-sublane__title">Pre-norm self-attention</span>
+        <p class="diag-sublane__body">
+          LayerNorm, then 12 heads × 64-d, dropout. Causal mask: position <em>i</em> attends only to <em>j ≤ i</em>.
+        </p>
+        <div class="diag-formula diag-formula--attn">
+          out = x + Attention(LayerNorm(x))
+        </div>
+      </section>
+      <div class="diag-arrow" aria-hidden="true"></div>
+      <section class="diag-sublane diag-sublane--ffn" aria-label="Feed-forward sublayer">
+        <span class="diag-sublane__badge" aria-hidden="true">B</span>
+        <span class="diag-sublane__title">Pre-norm feed-forward</span>
+        <p class="diag-sublane__body">
+          LayerNorm, Linear 768→3072, GELU, Linear 3072→768, dropout.
+        </p>
+        <div class="diag-formula diag-formula--ffn">
+          out = x + FFN(LayerNorm(x))
+        </div>
+      </section>
+    </div>
+  </section>
+  <div class="diag-arrow diag-arrow--tall" aria-hidden="true"></div>
+
+  <section class="diag-node diag-node--emphasis" aria-label="Language modeling head">
+    <p class="diag-node__title">Final LayerNorm · LM head</p>
+    <p class="diag-node__sub">Weights tied with W<sub>e</sub>. Logits over 50,257 tokens → softmax → next token.</p>
+  </section>
+</figure>
+
+<style>
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  .diag-kbd {
+    font-family: ui-monospace, Menlo, monospace;
+    font-size: 0.76rem;
+    font-weight: 400;
+    color: var(--text-muted);
+    background: transparent;
+    border: none;
+    padding: 0;
+  }
+</style>

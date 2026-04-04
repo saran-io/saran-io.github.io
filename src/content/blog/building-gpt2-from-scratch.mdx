@@ -6,8 +6,8 @@ tags: ["llm", "pytorch", "gpt-2", "transformers", "engineering", "model-atlas"]
 draft: false
 ---
 
-import Gpt2StackInline from '../../components/blog/Gpt2StackInline.astro';
-import SelfAttentionInline from '../../components/blog/SelfAttentionInline.astro';
+import Gpt2StackDiagram from '../../components/blog/Gpt2StackDiagram.astro';
+import SelfAttentionDiagram from '../../components/blog/SelfAttentionDiagram.astro';
 
 This is **week 1** of my open notebook on AI models: one model a week, always with runnable code and diagrams. The series lives in **[model-atlas](https://github.com/saran-io/model-atlas)** on GitHub — clone it if you want the full implementation, tests, and Mermaid sources.
 
@@ -28,9 +28,9 @@ python gpt2.py --visualize --viz_text "The cat sat on the mat"
 
 ## The stack (one screen)
 
-This diagram is **hand-authored SVG** (not a Mermaid export) so it stays sharp on retina displays and matches the rest of the site. It is **inlined in the page** so it renders the same in every browser (no separate image request).
+This diagram is **HTML and CSS** (the shared “diagram kit” below) so it scales with the page, respects your theme tokens, and stays readable for screen readers—no bitmap or SVG-as-image.
 
-<Gpt2StackInline />
+<Gpt2StackDiagram />
 
 **How to read it:** bytes become token IDs, IDs become vectors (token + position), then the same block runs twelve times: **attention mixes information across positions**, **FFN refines it per position**, residuals keep gradients healthy. The LM head is tied to the input embedding matrix — predicting token *k* and representing token *k* share one learned space.
 
@@ -38,7 +38,7 @@ This diagram is **hand-authored SVG** (not a Mermaid export) so it stays sharp o
 
 Same story every modern LLM tells, with small variants (GQA, RoPE, etc.) layered on later.
 
-<SelfAttentionInline />
+<SelfAttentionDiagram />
 
 The **1/√d_k** scaling is load-bearing. I removed it once with correct weights loaded: garbage output. Softmax saturates, gradients vanish. One division is the difference between a toy and a model.
 

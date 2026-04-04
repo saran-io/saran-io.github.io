@@ -1,0 +1,90 @@
+---
+/**
+ * Self-attention flow + toy causal mask — HTML/CSS + diagram-kit.
+ */
+---
+<figure class="diag-attn-figure" aria-labelledby="self-attn-title">
+  <figcaption id="self-attn-title" class="sr-only">Scaled dot-product self-attention for one head</figcaption>
+
+  <div class="diag-pipeline" role="group" aria-label="Attention computation steps">
+    <div class="diag-pipeline__row">
+    <section class="diag-pipeline__step diag-pipeline__step--1">
+      <p class="diag-pipeline__n">1</p>
+      <p class="diag-pipeline__title">Project</p>
+      <p class="diag-pipeline__body">Linear maps from hidden state</p>
+      <code class="diag-pipeline__mono">Q = X W<sub>Q</sub></code>
+      <code class="diag-pipeline__mono">K = X W<sub>K</sub></code>
+      <code class="diag-pipeline__mono">V = X W<sub>V</sub></code>
+    </section>
+    <span class="diag-pipeline__chev" aria-hidden="true">→</span>
+
+    <section class="diag-pipeline__step diag-pipeline__step--2">
+      <p class="diag-pipeline__n">2</p>
+      <p class="diag-pipeline__title">Scores</p>
+      <p class="diag-pipeline__body">Scaled dot products</p>
+      <code class="diag-pipeline__mono">S = QK<sup>T</sup> / √d<sub>k</sub></code>
+    </section>
+    <span class="diag-pipeline__chev" aria-hidden="true">→</span>
+
+    <section class="diag-pipeline__step diag-pipeline__step--3">
+      <p class="diag-pipeline__n">3</p>
+      <p class="diag-pipeline__title">Causal mask</p>
+      <p class="diag-pipeline__body">Future positions set to −∞ before softmax.</p>
+    </section>
+    <span class="diag-pipeline__chev" aria-hidden="true">→</span>
+
+    <section class="diag-pipeline__step diag-pipeline__step--4">
+      <p class="diag-pipeline__n">4</p>
+      <p class="diag-pipeline__title">Mix values</p>
+      <p class="diag-pipeline__body">Normalized weights × values</p>
+      <code class="diag-pipeline__mono">A = softmax(S)</code>
+      <code class="diag-pipeline__mono">out = A V</code>
+    </section>
+
+    <div class="diag-pipeline__foot">
+      <p class="diag-pipeline__foot-title">Multi-head: concat heads → W<sub>O</sub> (768×768)</p>
+      <p class="diag-pipeline__foot-sub">Residual adds this back into the stream before the FFN sublayer.</p>
+    </div>
+  </div>
+
+  <div class="diag-matrix-wrap">
+    <p class="diag-matrix-caption">Toy 4×4 causal mask: lower triangle allowed; upper triangle blocked.</p>
+    <div class="diag-matrix" role="img" aria-label="4 by 4 causal mask. Allowed cells in lower triangle; upper triangle dashed and faded.">
+      <span class="diag-matrix__cell diag-matrix__cell--on"></span>
+      <span class="diag-matrix__cell diag-matrix__cell--off"></span>
+      <span class="diag-matrix__cell diag-matrix__cell--off"></span>
+      <span class="diag-matrix__cell diag-matrix__cell--off"></span>
+      <span class="diag-matrix__cell diag-matrix__cell--on"></span>
+      <span class="diag-matrix__cell diag-matrix__cell--on"></span>
+      <span class="diag-matrix__cell diag-matrix__cell--off"></span>
+      <span class="diag-matrix__cell diag-matrix__cell--off"></span>
+      <span class="diag-matrix__cell diag-matrix__cell--on"></span>
+      <span class="diag-matrix__cell diag-matrix__cell--on"></span>
+      <span class="diag-matrix__cell diag-matrix__cell--on"></span>
+      <span class="diag-matrix__cell diag-matrix__cell--off"></span>
+      <span class="diag-matrix__cell diag-matrix__cell--on"></span>
+      <span class="diag-matrix__cell diag-matrix__cell--on"></span>
+      <span class="diag-matrix__cell diag-matrix__cell--on"></span>
+      <span class="diag-matrix__cell diag-matrix__cell--on"></span>
+    </div>
+  </div>
+</figure>
+
+<style>
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  .diag-attn-figure {
+    margin: 0;
+    padding: 0;
+    border: none;
+  }
+</style>

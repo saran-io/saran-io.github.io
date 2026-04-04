@@ -40,9 +40,11 @@ All commands are run from the root of the project, from a terminal:
 
 ## Blog diagrams
 
-Technical posts use **hand-authored SVG** in `public/blog/<slug>/` so figures stay sharp on retina and match site typography (see `building-gpt2-from-scratch`).
+Technical diagrams use **`src/styles/diagram-kit.css`** plus small **`.astro` components** (semantic HTML: `section`, `p`, `figure`, `aria-label`). That keeps figures themeable via `var(--border)`, `var(--text)`, etc., and avoids SVG-as-`<img>` quirks. Example: `src/components/blog/Gpt2StackDiagram.astro` on the GPT-2 post.
 
-Other options worth knowing:
+Static assets in `public/blog/<slug>/` are still fine for photos or one-off exports.
+
+Other tools worth knowing:
 
 | Tool | Best for |
 |------|-----------|
