@@ -6,6 +6,9 @@ tags: ["llm", "pytorch", "gpt-2", "transformers", "engineering", "model-atlas"]
 draft: false
 ---
 
+import Gpt2StackInline from '../../components/blog/Gpt2StackInline.astro';
+import SelfAttentionInline from '../../components/blog/SelfAttentionInline.astro';
+
 This is **week 1** of my open notebook on AI models: one model a week, always with runnable code and diagrams. The series lives in **[model-atlas](https://github.com/saran-io/model-atlas)** on GitHub — clone it if you want the full implementation, tests, and Mermaid sources.
 
 GPT-2 sounds like history. It is not. **GPT-4-class models, Claude, Llama, and DeepSeek still share the same skeleton**: decoder-only transformer, causal self-attention, pre-norm residuals, token prediction at the end. The differences are scale, data, and a long list of optimizations — not a different animal.
@@ -25,16 +28,9 @@ python gpt2.py --visualize --viz_text "The cat sat on the mat"
 
 ## The stack (one screen)
 
-This diagram is **hand-authored SVG** (not a Mermaid export) so it stays sharp on retina displays and matches the rest of the site.
+This diagram is **hand-authored SVG** (not a Mermaid export) so it stays sharp on retina displays and matches the rest of the site. It is **inlined in the page** so it renders the same in every browser (no separate image request).
 
-<img
-  src="/blog/gpt2-from-scratch/gpt2-stack.svg"
-  alt="GPT-2 forward pass from text to logits: tokenizer, embeddings, twelve transformer blocks, LM head"
-  width="720"
-  height="980"
-  loading="lazy"
-  decoding="async"
-/>
+<Gpt2StackInline />
 
 **How to read it:** bytes become token IDs, IDs become vectors (token + position), then the same block runs twelve times: **attention mixes information across positions**, **FFN refines it per position**, residuals keep gradients healthy. The LM head is tied to the input embedding matrix — predicting token *k* and representing token *k* share one learned space.
 
@@ -42,14 +38,7 @@ This diagram is **hand-authored SVG** (not a Mermaid export) so it stays sharp o
 
 Same story every modern LLM tells, with small variants (GQA, RoPE, etc.) layered on later.
 
-<img
-  src="/blog/gpt2-from-scratch/self-attention.svg"
-  alt="Scaled dot-product self-attention: Q, K, V, scaled scores, causal mask, softmax, output"
-  width="720"
-  height="320"
-  loading="lazy"
-  decoding="async"
-/>
+<SelfAttentionInline />
 
 The **1/√d_k** scaling is load-bearing. I removed it once with correct weights loaded: garbage output. Softmax saturates, gradients vanish. One division is the difference between a toy and a model.
 

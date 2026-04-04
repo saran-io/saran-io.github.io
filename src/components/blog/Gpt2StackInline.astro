@@ -1,0 +1,17 @@
+---
+import svg from '../../assets/diagrams/gpt2-stack.svg?raw';
+---
+<div class="inline-svg-diagram" role="img" aria-label="GPT-2 forward pass from text to logits" set:html={svg} />
+
+<style>
+  .inline-svg-diagram :global(svg) {
+    display: block;
+    width: 100%;
+    max-width: 720px;
+    height: auto;
+    margin: 2rem auto;
+    border-radius: var(--radius, 10px);
+    border: 1px solid var(--border, #e8e8e8);
+    box-sizing: border-box;
+  }
+</style>
