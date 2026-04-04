@@ -9,42 +9,72 @@ draft: false
 import Gpt2StackDiagram from '../../components/blog/Gpt2StackDiagram.astro';
 import SelfAttentionDiagram from '../../components/blog/SelfAttentionDiagram.astro';
 
-This is **week 1** of my open notebook on AI models: one model a week, always with runnable code and diagrams. The series lives in **[model-atlas](https://github.com/saran-io/model-atlas)** on GitHub — clone it if you want the full implementation, tests, and Mermaid sources.
+<p class="post-reading-hint">About 7 min read · Technical, beginner-friendly if you know Python</p>
 
-GPT-2 sounds like history. It is not. **GPT-4-class models, Claude, Llama, and DeepSeek still share the same skeleton**: decoder-only transformer, causal self-attention, pre-norm residuals, token prediction at the end. The differences are scale, data, and a long list of optimizations — not a different animal.
+This is **week 1** of an open notebook: **one model a week**, each with runnable code and visuals. The code lives in **[model-atlas](https://github.com/saran-io/model-atlas)** on GitHub.
+
+## At a glance
+
+- **What:** A small **GPT-2–style** model (decoder-only transformer) written **by hand in PyTorch**, then **loaded with real pretrained weights** so outputs match a reference implementation.
+- **Why:** Almost every big LLM today still uses the **same core idea** (attention + feed-forward blocks, predict the next token). GPT-2 is the shortest path to seeing that clearly.
+- **How to use this post:** Skim the bullets and diagrams first, then run the commands in **Run it locally** if you want to verify on your machine.
+
+## Who this is for
+
+- You can run **Python** in a terminal and are OK installing packages in a **virtual environment**.
+- You do **not** need a GPU for the steps below (inference for this size is fine on a laptop CPU for short generations).
+- If terms like “embedding” or “softmax” are new, follow the diagrams anyway—the flow is more important than memorizing names.
+
+## Why GPT-2 still matters
+
+It is easy to dismiss GPT-2 as old news. In practice, **GPT-4-class models, Claude, Llama, and DeepSeek still share the same skeleton**: decoder-only transformer, causal self-attention, pre-norm residuals, and next-token prediction at the end. What changed is **scale, data, and engineering**—not a totally different architecture.
 
 ## What I built
 
-A **from-scratch GPT-2 (124M)** in PyTorch: explicit `Linear`, `LayerNorm`, multi-head attention, GELU FFN, weight tying on the LM head — no `AutoModel` shortcut for the core forward pass. Then I **loaded the real checkpoint** so generations match the reference behavior. If one shape is wrong, the load fails or the logits are nonsense; passing that test is the proof the code matches the math.
+A **from-scratch GPT-2 (124M)** in PyTorch: explicit `Linear`, `LayerNorm`, multi-head attention, GELU feed-forward, and **weight tying** on the language-model head (no `AutoModel` shortcut for the core forward pass).
+
+Then I **loaded the real checkpoint**. That is the sanity check: if even one shape is wrong, weights do not line up or the logits are garbage. When generations look right, the code matches the math.
+
+## Run it locally
+
+**You need:** Python **3.10+**, `git`, and about **5–10 minutes** the first time (downloads weights).
+
+1. Clone the repo and enter the code folder.
+2. Create and activate a virtual environment (`python -m venv .venv`).
+3. Install dependencies (`pip install -r requirements.txt`). Stack: **PyTorch**, **Hugging Face `transformers`** (for tokenizer/checkpoint loading only), **NumPy**.
+4. Run generation or the optional attention visualization.
 
 ```bash
 git clone https://github.com/saran-io/model-atlas.git
 cd model-atlas/models/01-gpt2-from-scratch/code
-python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
+python -m venv .venv
+source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 python gpt2.py --prompt "The future of AI is" --max_tokens 80
 python gpt2.py --visualize --viz_text "The cat sat on the mat"
 ```
 
+If a command fails, check that your venv is active and that PyTorch installed for your platform (see [pytorch.org](https://pytorch.org/get-started/locally/)).
+
 ## The stack (one screen)
 
-This diagram is **HTML and CSS** (the shared “diagram kit” below) so it scales with the page, respects your theme tokens, and stays readable for screen readers—no bitmap or SVG-as-image.
+Below is a **single-page view** of the forward pass: boxes are real HTML, styled for readability (including screen readers). No separate image file.
 
 <Gpt2StackDiagram />
 
-**How to read it:** bytes become token IDs, IDs become vectors (token + position), then the same block runs twelve times: **attention mixes information across positions**, **FFN refines it per position**, residuals keep gradients healthy. The LM head is tied to the input embedding matrix — predicting token *k* and representing token *k* share one learned space.
+**How to read it, in one breath:** text becomes **token IDs**; IDs become **vectors** (token + position); then the **same block runs twelve times**—**attention** mixes information across positions, **feed-forward** refines each position, and **residuals** keep training stable. At the end, the **LM head** outputs scores over the vocabulary; weights are **tied** with the input embeddings (predicting token *k* and representing *k* share one space).
 
 ## Self-attention in one pass
 
-Same story every modern LLM tells, with small variants (GQA, RoPE, etc.) layered on later.
+The same pattern shows up in modern models (sometimes with extras like **GQA**, **RoPE**, etc.).
 
 <SelfAttentionDiagram />
 
-The **1/√d_k** scaling is load-bearing. I removed it once with correct weights loaded: garbage output. Softmax saturates, gradients vanish. One division is the difference between a toy and a model.
+**Scaling (the 1/√d<sub>k</sub> step):** attention scores are divided by the **square root of the head dimension** so dot products stay in a range where **softmax** does not saturate. I removed that division once with correct weights loaded: **nonsense output**. One divisor is the difference between a toy and a working stack.
 
 ## Animated explainer
 
-The same **HTML/CSS animation** from the static explainer page is embedded below: token pulse, signal moving through the stack, and a toy causal mask. It uses `prefers-reduced-motion` when readers have that enabled.
+Below is an **embedded page** with simple **CSS motion** (token pulse, flow down the stack, toy causal mask). If you use **reduced motion** in your OS, the animation respects that.
 
 <div class="explainer-frame">
   <iframe
@@ -55,16 +85,25 @@ The same **HTML/CSS animation** from the static explainer page is embedded below
   ></iframe>
 </div>
 
-<p class="explainer-caption"><a href="/labs/gpt2-explainer/" target="_blank" rel="noopener">Open full screen in a new tab</a> · <a href="https://github.com/saran-io/model-atlas/tree/main/models/01-gpt2-from-scratch/explainer" target="_blank" rel="noopener">Source in model-atlas</a></p>
+<p class="explainer-caption"><a href="/labs/gpt2-explainer/" target="_blank" rel="noopener noreferrer">Open full screen in a new tab</a> · <a href="https://github.com/saran-io/model-atlas/tree/main/models/01-gpt2-from-scratch/explainer" target="_blank" rel="noopener noreferrer">Source in model-atlas</a></p>
 
-## Why this matters if you ship agents
+## Why this matters in production
 
-At **Tekvo** I spend most days inside LLM APIs and agent loops. Internals are not academic: they explain **why context length drives cost**, **why tokenizer edge cases become production bugs**, and **why hallucinations correlate with attention landing on the wrong context**. Starting from GPT-2 makes every stack trace and paper diagram legible.
+At **Tekvo** I work with LLM APIs and **agents** every day. Internals are not academic trivia: they help explain **why longer context costs more**, **why tokenizer quirks become bugs**, and **why models sometimes “reach” for the wrong context** (attention is doing what it was trained to do).
 
 ## What is next
 
-Week 2 in the repo is **GPT-4o vs GPT-4.1** on real agentic workloads — not leaderboard scores, tasks that look like production.
+**Week 2** in the repo is **GPT-4o vs GPT-4.1** on **real agent-style tasks**—not leaderboard scores, workloads that look like production.
 
 ---
 
-If you are learning LLMs, implement **one** classic model end to end before you chase the next API release. GPT-2 is still the best compressed lesson in how the industry builds language models.
+If you are learning LLMs, **implement one classic model end to end** before chasing the newest API. GPT-2 remains one of the best **compressed lessons** in how the industry builds language models.
+
+<div class="post-resources" role="complementary" aria-label="Resources">
+  <p class="post-resources__title">Resources</p>
+  <ul>
+    <li><a href="https://github.com/saran-io/model-atlas">model-atlas</a> — full series, week 1 code under <code>models/01-gpt2-from-scratch/</code></li>
+    <li><a href="https://github.com/saran-io/model-atlas/blob/main/models/01-gpt2-from-scratch/DEEP-DIVE.md">DEEP-DIVE.md</a> — longer technical write-up in the repo</li>
+    <li><a href="/labs/gpt2-explainer/">Animated explainer</a> — same site, full-page version</li>
+  </ul>
+</div>

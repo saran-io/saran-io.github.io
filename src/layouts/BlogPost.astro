@@ -27,7 +27,12 @@ const tocHeadings = headings.filter((h) => h.depth >= 2 && h.depth <= 4);
 const showToc = tocHeadings.length >= 2;
 ---
 
-<Base title={title} description={description} image={cover}>
+<Base
+  title={title}
+  description={description}
+  image={cover}
+  articlePublishedTime={date.toISOString()}
+>
   <div class="container">
     <div class:list={['post-layout', { 'has-toc': showToc }]}>
       <article class="post">
@@ -258,6 +263,42 @@ const showToc = tocHeadings.length >= 2;
     transition: border-color 0.15s;
   }
   .prose :global(a:hover) { border-color: var(--text); }
+
+  /* Resources box (end of technical posts) */
+  .prose :global(.post-resources) {
+    margin: 2.5rem 0;
+    padding: 1rem 1.25rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+  }
+
+  .prose :global(.post-resources__title) {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    margin: 0 0 0.65rem;
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  .prose :global(.post-resources ul) {
+    margin: 0;
+    padding-left: 1.2rem;
+    list-style: disc;
+  }
+
+  .prose :global(.post-resources li) {
+    margin-bottom: 0.4rem;
+    font-size: 0.95rem;
+  }
+
+  .prose :global(.post-reading-hint) {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    margin: -0.5rem 0 1.5rem;
+  }
 
   /* Footer */
   footer {

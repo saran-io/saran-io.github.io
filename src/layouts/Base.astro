@@ -7,10 +7,13 @@ interface Props {
   title: string;
   description?: string;
   image?: string;
+  /** When set, Open Graph uses type article and optional published time (ISO 8601). */
+  articlePublishedTime?: string;
 }
 
-const { title, description = 'Personal site — blog & projects', image } = Astro.props;
+const { title, description = 'Personal site — blog & projects', image, articlePublishedTime } = Astro.props;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const isArticle = Boolean(articlePublishedTime);
 ---
 
 <!doctype html>
@@ -28,11 +31,14 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalURL} />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={isArticle ? 'article' : 'website'} />
+    {articlePublishedTime && (
+      <meta property="article:published_time" content={articlePublishedTime} />
+    )}
     {image && <meta property="og:image" content={image} />}
 
     <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:card" content={image ? 'summary_large_image' : 'summary'} />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     {image && <meta name="twitter:image" content={image} />}
