@@ -41,9 +41,18 @@ The **1/√d_k** scaling is load-bearing. I removed it once with correct weights
 
 ## Animated explainer
 
-For talks and teaching, there is a **lightweight HTML/CSS animation** (token strip, causal mask toy, signal down the stack). It lives on this site so you can link it directly:
+The same **HTML/CSS animation** from the static explainer page is embedded below: token pulse, signal moving through the stack, and a toy causal mask. It uses `prefers-reduced-motion` when readers have that enabled.
 
-**[Open the animated explainer](/labs/gpt2-explainer/)** · [source in model-atlas](https://github.com/saran-io/model-atlas/tree/main/models/01-gpt2-from-scratch/explainer)
+<div class="explainer-frame">
+  <iframe
+    src="/labs/gpt2-explainer/"
+    title="Animated GPT-2 forward pass: tokens, transformer stack, causal attention"
+    loading="lazy"
+    referrerpolicy="no-referrer-when-downgrade"
+  ></iframe>
+</div>
+
+<p class="explainer-caption"><a href="/labs/gpt2-explainer/" target="_blank" rel="noopener">Open full screen in a new tab</a> · <a href="https://github.com/saran-io/model-atlas/tree/main/models/01-gpt2-from-scratch/explainer" target="_blank" rel="noopener">Source in model-atlas</a></p>
 
 ## Why this matters if you ship agents
 
