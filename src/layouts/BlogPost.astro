@@ -166,7 +166,10 @@ const showToc = tocHeadings.length >= 2;
   .prose :global(li) { margin-bottom: 0.5rem; }
 
   .prose :global(img) {
+    display: block;
     width: 100%;
+    max-width: 100%;
+    height: auto;
     border-radius: var(--radius);
     margin: 2rem 0;
     border: 1px solid var(--border);

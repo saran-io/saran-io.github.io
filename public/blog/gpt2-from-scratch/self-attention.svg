@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" role="img" aria-labelledby="sat satd">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 320" width="720" height="320" role="img" aria-labelledby="sat satd">
   <title id="sat">Scaled dot-product self-attention (one head)</title>
   <desc id="satd">Query, key, value projections, scaled scores, causal mask, softmax, weighted values.</desc>
   <defs>

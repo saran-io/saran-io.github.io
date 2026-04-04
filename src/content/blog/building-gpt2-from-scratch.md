@@ -27,7 +27,14 @@ python gpt2.py --visualize --viz_text "The cat sat on the mat"
 
 This diagram is **hand-authored SVG** (not a Mermaid export) so it stays sharp on retina displays and matches the rest of the site.
 
-![GPT-2 forward pass from text to logits](/blog/gpt2-from-scratch/gpt2-stack.svg)
+<img
+  src="/blog/gpt2-from-scratch/gpt2-stack.svg"
+  alt="GPT-2 forward pass from text to logits: tokenizer, embeddings, twelve transformer blocks, LM head"
+  width="720"
+  height="980"
+  loading="lazy"
+  decoding="async"
+/>
 
 **How to read it:** bytes become token IDs, IDs become vectors (token + position), then the same block runs twelve times: **attention mixes information across positions**, **FFN refines it per position**, residuals keep gradients healthy. The LM head is tied to the input embedding matrix — predicting token *k* and representing token *k* share one learned space.
 
@@ -35,7 +42,14 @@ This diagram is **hand-authored SVG** (not a Mermaid export) so it stays sharp o
 
 Same story every modern LLM tells, with small variants (GQA, RoPE, etc.) layered on later.
 
-![Scaled dot-product attention with causal mask](/blog/gpt2-from-scratch/self-attention.svg)
+<img
+  src="/blog/gpt2-from-scratch/self-attention.svg"
+  alt="Scaled dot-product self-attention: Q, K, V, scaled scores, causal mask, softmax, output"
+  width="720"
+  height="320"
+  loading="lazy"
+  decoding="async"
+/>
 
 The **1/√d_k** scaling is load-bearing. I removed it once with correct weights loaded: garbage output. Softmax saturates, gradients vanish. One division is the difference between a toy and a model.
 
