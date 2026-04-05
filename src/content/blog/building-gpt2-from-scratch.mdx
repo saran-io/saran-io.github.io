@@ -15,25 +15,25 @@ This is **week 1** of an open notebook: **one model a week**, each with runnable
 
 ## At a glance
 
-- **What:** A small **GPT-2–style** model (decoder-only transformer) written **by hand in PyTorch**, then **loaded with real pretrained weights** so outputs match a reference implementation.
-- **Why:** Almost every big LLM today still uses the **same core idea** (attention + feed-forward blocks, predict the next token). GPT-2 is the shortest path to seeing that clearly.
+- **What:** A small **GPT-2** (Generative Pre-trained Transformer 2) **decoder-only** model written **by hand in PyTorch**, then **loaded with real pretrained weights** so outputs match a reference implementation.
+- **Why:** Almost every big **LLM** (large language model) today still uses the **same core idea** (attention + feed-forward blocks, predict the next token). GPT-2 is the shortest path to seeing that clearly.
 - **How to use this post:** Skim the bullets and diagrams first, then run the commands in **Run it locally** if you want to verify on your machine.
 
 ## Who this is for
 
-- You can run **Python** in a terminal and are OK installing packages in a **virtual environment**.
-- You do **not** need a GPU for the steps below (inference for this size is fine on a laptop CPU for short generations).
-- If terms like “embedding” or “softmax” are new, follow the diagrams anyway—the flow is more important than memorizing names.
+- You can run **Python** in a terminal and are OK installing packages in a **virtual environment** (an isolated folder of packages so projects do not clash).
+- You do **not** need a **GPU** (graphics processing unit) for the steps below—inference for this size is fine on a laptop **CPU** (central processing unit) for short generations.
+- If terms like “embedding” or “softmax” are new, follow the diagrams anyway—the flow is more important than memorizing names. Use **[Acronyms & terms](#acronyms--terms)** and the links there as a sidebar.
 
 ## Why GPT-2 still matters
 
-It is easy to dismiss GPT-2 as old news. In practice, **GPT-4-class models, Claude, Llama, and DeepSeek still share the same skeleton**: decoder-only transformer, causal self-attention, pre-norm residuals, and next-token prediction at the end. What changed is **scale, data, and engineering**—not a totally different architecture.
+It is easy to dismiss GPT-2 as old news. In practice, **GPT-4-class models, Claude, Llama, and DeepSeek still share the same skeleton**: decoder-only **transformer**, causal self-attention, pre-norm residuals, and next-token prediction at the end. What changed is **scale, data, and engineering**—not a totally different architecture.
 
 ## What I built
 
-A **from-scratch GPT-2 (124M)** in PyTorch: explicit `Linear`, `LayerNorm`, multi-head attention, GELU feed-forward, and **weight tying** on the language-model head (no `AutoModel` shortcut for the core forward pass).
+A **from-scratch GPT-2 (124M parameters)** in **PyTorch** (Facebook’s open-source tensor / neural-network library for Python): explicit `Linear`, `LayerNorm`, multi-head attention, **GELU** feed-forward, and **weight tying** on the **LM** (language modeling) head—no Hugging Face **`AutoModel`** shortcut for the core forward pass.
 
-Then I **loaded the real checkpoint**. That is the sanity check: if even one shape is wrong, weights do not line up or the logits are garbage. When generations look right, the code matches the math.
+Then I **loaded the real checkpoint** (a saved file of trained weights). That is the sanity check: if even one shape is wrong, weights do not line up or the **logits** (unnormalized scores before softmax) are garbage. When generations look right, the code matches the math.
 
 ## Run it locally
 
@@ -41,7 +41,7 @@ Then I **loaded the real checkpoint**. That is the sanity check: if even one sha
 
 1. Clone the repo and enter the code folder.
 2. Create and activate a virtual environment (`python -m venv .venv`).
-3. Install dependencies (`pip install -r requirements.txt`). Stack: **PyTorch**, **Hugging Face `transformers`** (for tokenizer/checkpoint loading only), **NumPy**.
+3. Install dependencies (`pip install -r requirements.txt`). Stack: **PyTorch**, **Hugging Face `transformers`** (for tokenizer / checkpoint loading helpers only), **NumPy** (numerical arrays).
 4. Run generation or the optional attention visualization.
 
 ```bash
@@ -58,19 +58,17 @@ If a command fails, check that your venv is active and that PyTorch installed fo
 
 ## The stack (one screen)
 
-Below is a **single-page view** of the forward pass: boxes are real HTML, styled for readability (including screen readers). No separate image file.
-
 <Gpt2StackDiagram />
 
-**How to read it, in one breath:** text becomes **token IDs**; IDs become **vectors** (token + position); then the **same block runs twelve times**—**attention** mixes information across positions, **feed-forward** refines each position, and **residuals** keep training stable. At the end, the **LM head** outputs scores over the vocabulary; weights are **tied** with the input embeddings (predicting token *k* and representing *k* share one space).
+**How to read it, in one breath:** text becomes **token IDs**; IDs become **vectors** (token + position); then the **same block runs twelve times**—**attention** mixes information across positions, **feed-forward** (**FFN** / **MLP**) refines each position, and **residuals** (adding the input back) keep training stable. At the end, the **LM head** outputs scores over the vocabulary; weights are **tied** with the input embeddings (predicting token *k* and representing *k* share one space).
 
 ## Self-attention in one pass
 
-The same pattern shows up in modern models (sometimes with extras like **GQA**, **RoPE**, etc.).
+The same pattern shows up in modern models (sometimes with extras like **GQA** and **RoPE**—see glossary).
 
 <SelfAttentionDiagram />
 
-**Scaling (the 1/√d<sub>k</sub> step):** attention scores are divided by the **square root of the head dimension** so dot products stay in a range where **softmax** does not saturate. I removed that division once with correct weights loaded: **nonsense output**. One divisor is the difference between a toy and a working stack.
+**Scaling (the 1/√d<sub>k</sub> step):** attention scores are divided by the **square root of the head dimension** so dot products stay in a range where **softmax** (a function that turns scores into probabilities that sum to 1) does not saturate. I removed that division once with correct weights loaded: **nonsense output**. One divisor is the difference between a toy and a working stack.
 
 ## Animated explainer
 
@@ -87,7 +85,7 @@ The same pattern shows up in modern models (sometimes with extras like **GQA**, 
 
 ## Why this matters in production
 
-At **Tekvo** I work with LLM APIs and **agents** every day. Internals are not academic trivia: they help explain **why longer context costs more**, **why tokenizer quirks become bugs**, and **why models sometimes “reach” for the wrong context** (attention is doing what it was trained to do).
+At **Tekvo** I work with **LLM** **APIs** (application programming interfaces) and **agents** (systems that loop: model → tool → model) every day. Internals are not academic trivia: they help explain **why longer context costs more**, **why tokenizer quirks become bugs**, and **why models sometimes “reach” for the wrong context** (attention is doing what it was trained to do).
 
 ## What is next
 
@@ -97,11 +95,81 @@ At **Tekvo** I work with LLM APIs and **agents** every day. Internals are not ac
 
 If you are learning LLMs, **implement one classic model end to end** before chasing the newest API. GPT-2 remains one of the best **compressed lessons** in how the industry builds language models.
 
+## Acronyms & terms
+
+<dl class="post-glossary">
+
+<dt>API</dt>
+<dd><strong>A</strong>pplication <strong>P</strong>rogramming <strong>I</strong>nterface — a contract for how one piece of software talks to another. Here: remote model services you call over the network.<span class="learn">Intro: <a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Client-side_web_APIs/Introduction" target="_blank" rel="noopener noreferrer">MDN — APIs</a></span></dd>
+
+<dt>BPE</dt>
+<dd><strong>B</strong>yte <strong>P</strong>air <strong>E</strong>ncoding — a way to turn text into subword <strong>tokens</strong> by merging frequent pairs. GPT-2 uses a byte-level BPE vocabulary (50,257 units).<span class="learn">Paper (subword NMT): <a href="https://arxiv.org/abs/1508.07909" target="_blank" rel="noopener noreferrer">Sennrich et al., 2016</a> · Course: <a href="https://huggingface.co/learn/nlp-course/chapter6/5" target="_blank" rel="noopener noreferrer">Hugging Face — Byte-Pair Encoding tokenization</a></span></dd>
+
+<dt>CPU / GPU</dt>
+<dd><strong>C</strong>entral / <strong>G</strong>raphics <strong>P</strong>rocessing <strong>U</strong>nit — general-purpose vs parallel math hardware. Big training needs a GPU; small GPT-2 inference can run on CPU for short texts.<span class="learn">PyTorch: <a href="https://pytorch.org/tutorials/beginner/basics/intro.html" target="_blank" rel="noopener noreferrer">Learn the basics</a></span></dd>
+
+<dt>FFN / MLP</dt>
+<dd><strong>F</strong>eed-<strong>F</strong>orward <strong>N</strong>etwork / <strong>M</strong>ulti-<strong>L</strong>ayer <strong>P</strong>erceptron — the per-position MLP inside each transformer block (expand → activation → contract).<span class="learn">See transformer FFN in <a href="https://jalammar.github.io/illustrated-transformer/" target="_blank" rel="noopener noreferrer">The Illustrated Transformer</a></span></dd>
+
+<dt>GELU</dt>
+<dd><strong>G</strong>aussian <strong>E</strong>rror <strong>L</strong>inear <strong>U</strong>nit — a smooth activation function used in GPT-2’s FFN instead of ReLU.<span class="learn">Paper: <a href="https://arxiv.org/abs/1606.08415" target="_blank" rel="noopener noreferrer">Hendrycks &amp; Gimpel, 2016</a></span></dd>
+
+<dt>GPT</dt>
+<dd><strong>G</strong>enerative <strong>P</strong>re-trained <strong>T</strong>ransformer — OpenAI’s family of decoder-only LMs; GPT-2 is the 2019 public release (~124M–1.5B parameters).<span class="learn">Report: <a href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf" target="_blank" rel="noopener noreferrer">Radford et al. — Language Models are Unsupervised Multitask Learners (PDF)</a></span></dd>
+
+<dt>GQA</dt>
+<dd><strong>G</strong>rouped-<strong>Q</strong>uery <strong>A</strong>ttention — shares key/value heads across query heads to save memory in long contexts (not in vanilla GPT-2).<span class="learn">Paper: <a href="https://arxiv.org/abs/2305.13245" target="_blank" rel="noopener noreferrer">Ainslie et al., 2023</a></span></dd>
+
+<dt>LLM</dt>
+<dd><strong>L</strong>arge <strong>L</strong>anguage <strong>M</strong>odel — a neural net trained to model text, usually by predicting the next token.<span class="learn">Gentle stack walkthrough: <a href="https://jalammar.github.io/illustrated-gpt2/" target="_blank" rel="noopener noreferrer">The Illustrated GPT-2</a></span></dd>
+
+<dt>LM head</dt>
+<dd><strong>L</strong>anguage <strong>M</strong>odeling head — final linear map from hidden size to vocabulary size to produce <strong>logits</strong> for the next token.<span class="learn">Same Illustrated GPT-2 link above</span></dd>
+
+<dt>Logits</dt>
+<dd>Raw scores before softmax; higher means “more likely” after normalization.<span class="learn">Softmax intuition: <a href="https://deepai.org/machine-learning-glossary-and-terms/softmax-layer" target="_blank" rel="noopener noreferrer">DeepAI glossary — softmax</a></span></dd>
+
+<dt>PyTorch</dt>
+<dd>Open-source Python library for tensors and differentiable programs (how most research and many products train models).<span class="learn"><a href="https://pytorch.org/tutorials/" target="_blank" rel="noopener noreferrer">Official tutorials</a></span></dd>
+
+<dt>RoPE</dt>
+<dd><strong>R</strong>otary <strong>P</strong>osition <strong>E</strong>mbedding — encodes position by rotating features (common in Llama-style models; GPT-2 used learned absolute position embeddings).<span class="learn">Paper: <a href="https://arxiv.org/abs/2104.09864" target="_blank" rel="noopener noreferrer">Su et al., 2021</a></span></dd>
+
+<dt>Transformer</dt>
+<dd>Architecture based on attention + FFN stacks; “decoder-only” means one direction (left-to-right), suited to generation.<span class="learn">Original paper: <a href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener noreferrer">Vaswani et al. — Attention Is All You Need</a> · <a href="https://jalammar.github.io/illustrated-transformer/" target="_blank" rel="noopener noreferrer">Illustrated Transformer</a></span></dd>
+
+</dl>
+
+## References & sources
+
+<div class="post-sources">
+  <p class="post-sources__title">What this post draws on</p>
+  <p style="margin:0 0 0.5rem;font-size:0.9rem;color:var(--text-muted);">Primary papers and standard teaching material—not a claim of novelty. Implementations were checked against public GPT-2 weights and the repo’s own <code>DEEP-DIVE.md</code>.</p>
+  <ol>
+    <li>Vaswani, Shazeer, Parmar, et al. (2017). <em>Attention Is All You Need.</em> <a href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener noreferrer">arXiv:1706.03762</a></li>
+    <li>Radford, Wu, Child, et al. (2019). <em>Language Models are Unsupervised Multitask Learners</em> (GPT-2). <a href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf" target="_blank" rel="noopener noreferrer">OpenAI PDF</a></li>
+    <li>Sennrich, Haddow, Birch (2016). <em>Neural Machine Translation of Rare Words with Subword Units</em> (BPE). <a href="https://arxiv.org/abs/1508.07909" target="_blank" rel="noopener noreferrer">arXiv:1508.07909</a></li>
+    <li>Alammar, J. <em>The Illustrated Transformer</em> / <em>The Illustrated GPT-2</em>. <a href="https://jalammar.github.io/illustrated-transformer/" target="_blank" rel="noopener noreferrer">jalammar.github.io</a></li>
+    <li>Hugging Face. <em>NLP Course</em> (tokenizers, transformers). <a href="https://huggingface.co/learn/nlp-course/chapter2/4" target="_blank" rel="noopener noreferrer">huggingface.co/learn</a></li>
+    <li>Karpathy, A. <em>Let’s reproduce GPT-2</em> (educational video series). <a href="https://www.youtube.com/watch?v=l8pRSuU81PU" target="_blank" rel="noopener noreferrer">YouTube</a></li>
+  </ol>
+</div>
+
 <div class="post-resources" role="complementary" aria-label="Resources">
   <p class="post-resources__title">Resources</p>
   <ul>
     <li><a href="https://github.com/saran-io/model-atlas">model-atlas</a> — full series, week 1 code under <code>models/01-gpt2-from-scratch/</code></li>
     <li><a href="https://github.com/saran-io/model-atlas/blob/main/models/01-gpt2-from-scratch/DEEP-DIVE.md">DEEP-DIVE.md</a> — longer technical write-up in the repo</li>
     <li><a href="/labs/gpt2-explainer/">Animated explainer</a></li>
+  </ul>
+</div>
+
+<div class="post-connect">
+  <p class="post-connect__title">Connect</p>
+  <p>If this was useful—questions, corrections, or you’re building in the same space—say hi. I post builds and notes on X and LinkedIn.</p>
+  <ul class="post-connect__links">
+    <li><a href="https://x.com/saran_io" target="_blank" rel="noopener noreferrer">X — @saran_io</a></li>
+    <li><a href="https://www.linkedin.com/in/saran-io/" target="_blank" rel="noopener noreferrer">LinkedIn — /in/saran-io</a></li>
+    <li><a href="https://github.com/saran-io" target="_blank" rel="noopener noreferrer">GitHub — saran-io</a></li>
   </ul>
 </div>
